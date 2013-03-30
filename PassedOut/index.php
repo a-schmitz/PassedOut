@@ -72,7 +72,7 @@ $login = new Login($db);
       </div>
     </div>
     <div id="map-canvas"></div>
-    <div id="marker-details" tabindex="-1" class="popover fade in">    
+    <div id="marker-details" tabindex="-1" class="popover fade in">
             <h3 class="popover-title">Edit Marker Details</h3>
             <div class="popover-content">
             	<span>Title:</span>
@@ -82,7 +82,7 @@ $login = new Login($db);
             	<button id="details-delete" class="btn btn-danger">Delete</button>
             	<button id="details-save" class="btn pull-right">Save</button>
             	<button id="details-cancel" class="btn pull-right">Cancel</button>
-            	
+
             </div>
         </div>
     <?php
@@ -112,11 +112,6 @@ $login = new Login($db);
     <script src="./js/jquery-1.9.1.min.js"></script>
     <script src="./js/bootstrap.min.js"></script>
     <script src="./js/passedout-marker.js"></script>
-    <script src="./js/passedout.js"></script>    
+    <script src="./js/passedout.js"></script>
   </body>
 </html>
-
-<!--
-passedout
-hkJHue3a9nj2jijJ#
--->
