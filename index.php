@@ -17,18 +17,6 @@ $login = new Login($db);
     <link href="./css/bootstrap.min.css" rel="stylesheet">
     <link href="./css/site.css" rel="stylesheet">
    	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
-    <script type="text/javascript">
-      function initialize() {
-        var mapOptions = {
-          center: new google.maps.LatLng(0, 0),
-          zoom: 2,
-          minZoom: 2,
-          mapTypeId: google.maps.MapTypeId.SATELLITE
-        };
-        var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-      }
-      google.maps.event.addDomListener(window, 'load', initialize);
-    </script>
   </head>
   <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -47,7 +35,7 @@ $login = new Login($db);
               </li>
               <li class="divider-vertical"></li>
               <li>
-              	<a href="#">Place Marker</a>
+              	<a id="place-marker" href="#">Place Marker</a>
               </li>
             </ul>
             <ul class="nav pull-right">
@@ -83,7 +71,20 @@ $login = new Login($db);
         </div>
       </div>
     </div>
-    <div id="map-canvas"/>
+    <div id="map-canvas"></div>
+    <div id="marker-details" tabindex="-1" class="popover fade in">    
+            <h3 class="popover-title">Edit Marker Details</h3>
+            <div class="popover-content">
+            	<span>Title:</span>
+            	<input id="details-title" type="text" />
+            	<span>Description:</span>
+            	<textarea id="details-description" rows="3"></textarea>
+            	<button id="details-delete" class="btn btn-danger">Delete</button>
+            	<button id="details-save" class="btn pull-right">Save</button>
+            	<button id="details-cancel" class="btn pull-right">Cancel</button>
+            	
+            </div>
+        </div>
     <?php
 
     if ($login->errors) {
@@ -110,6 +111,8 @@ $login = new Login($db);
     } ?>
     <script src="./js/jquery-1.9.1.min.js"></script>
     <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/passedout-marker.js"></script>
+    <script src="./js/passedout.js"></script>    
   </body>
 </html>
 

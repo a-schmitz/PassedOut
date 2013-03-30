@@ -32,3 +32,11 @@ body {
 	display: inline;
 }
 
+#marker-details {
+	right: 5px;
+   	bottom: 25px;
+    left: auto;
+    top: auto;
+    opacity: 0.8;
+    display: none;
+}
