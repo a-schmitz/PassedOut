@@ -32,6 +32,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="css\bootstrap-responsive.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="css\bootstrap.min.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="css\site.css">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="img\glyphicons-halflings-white.png">
       <SubType>Content</SubType>
     </Content>
@@ -65,5 +74,6 @@
     <Folder Include="config" />
     <Folder Include="img" />
     <Folder Include="js" />
+    <Folder Include="css" />
   </ItemGroup>
 </Project>

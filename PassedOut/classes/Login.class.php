@@ -53,7 +53,7 @@ class Login {
 
     private function loginWithPostData() {
             $this->user_name = $this->connection->real_escape_string($_POST['username']);
-            $checklogin = $this->connection->query("SELECT user_name, user_password_hash FROM users WHERE user_name = '".$this->user_name."';");
+            $checklogin = $this->connection->query("SELECT user_name, user_password_hash FROM user WHERE user_name = '".$this->user_name."';");
 
             if($checklogin->num_rows == 1) {
                 $result_row = $checklogin->fetch_object();
@@ -154,12 +154,12 @@ class Login {
                 //append salt2 data to the password, and crypt using salt, results in a 60 char output
                 $this->user_password_hash = crypt ( $this->user_password, $hashing_algorithm . $salt );
 
-                $query_check_user_name = $this->connection->query("SELECT * FROM users WHERE user_name = '".$this->user_name."'");
+                $query_check_user_name = $this->connection->query("SELECT * FROM user WHERE user_name = '".$this->user_name."'");
 
                 if($query_check_user_name->num_rows == 1) {
                     $this->errors[] = "Sorry, that user name is already taken.";
                 } else {
-                    $query_new_user_insert = $this->connection->query("INSERT INTO users (user_name, user_password_hash) VALUES('".$this->user_name."', '".$this->user_password_hash."')");
+                    $query_new_user_insert = $this->connection->query("INSERT INTO user (user_name, user_password_hash) VALUES('".$this->user_name."', '".$this->user_password_hash."')");
                     
                     if ($query_new_user_insert) {
                         $this->messages[] = "Your account was successfully created.";

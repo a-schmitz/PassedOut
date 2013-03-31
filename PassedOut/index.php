@@ -22,20 +22,22 @@ $login = new Login($db);
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container-fluid">
-          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
           <a class="brand" href="#">PassedOut</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
               <li>
-              	<a href="#" onclick="return false;">Welcome, <?php echo htmlspecialchars($login->getUserName(), ENT_COMPAT, 'UTF-8');?></a>
+              	<a href="#" id="welcome">Welcome, <?php echo htmlspecialchars($login->getUserName(), ENT_COMPAT, 'UTF-8');?></a>
               </li>
               <li class="divider-vertical"></li>
               <li>
               	<a id="place-marker" href="#">Place Marker</a>
+              </li>
+              <li class="divider-vertical"></li>
+              <li class="dropdown">
+                <div id="search-container" class="navbar-search" data-toggle="dropdown">
+                    <input id="search-input" type="text" class="search-query" placeholder="Search">
+                    <i class="icon-search"></i>
+                </div>
               </li>
             </ul>
             <ul class="nav pull-right">
