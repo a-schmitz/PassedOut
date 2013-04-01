@@ -10,6 +10,7 @@
 class Login {	
     private     $connection                 = null;                     // database connection
 
+    private     $user_id                    = -1;                         
     private     $user_name                  = "";                       // user's name
     private     $user_password              = "";                       // user's password (what comes from POST)
     private     $user_password_hash         = "";                       // user's hashed and salted password
@@ -20,6 +21,8 @@ class Login {
     public      $errors                     = array();                  // collection of error messages
     public      $messages                   = array();                  // collection of success / neutral messages
 
+    // TODO refactor or completly create my own login mechanism?
+    
     public function __construct(Database $db) {
         $this->connection = $db->getDatabaseConnection();
 
@@ -47,18 +50,20 @@ class Login {
     }
 
     private function loginWithSessionData() {
-    	$this->user_name = $_SESSION['user_name'];
+    	$this->user_id = $_SESSION['user_id'];
+        $this->user_name = $_SESSION['user_name'];
         $this->user_is_logged_in = true;
     }
 
     private function loginWithPostData() {
             $this->user_name = $this->connection->real_escape_string($_POST['username']);
-            $checklogin = $this->connection->query("SELECT user_name, user_password_hash FROM user WHERE user_name = '".$this->user_name."';");
+            $checklogin = $this->connection->query("SELECT user_id, user_name, user_password_hash FROM user WHERE user_name = '".$this->user_name."';");
 
             if($checklogin->num_rows == 1) {
                 $result_row = $checklogin->fetch_object();
                 
                 if (crypt($_POST['password'], $result_row->user_password_hash) == $result_row->user_password_hash) {
+                    $_SESSION['user_id'] = $result_row->user_id;
                     $_SESSION['user_name'] = $result_row->user_name;
                     $_SESSION['user_logged_in'] = 1;
 
@@ -86,6 +91,14 @@ class Login {
         return $this->user_is_logged_in;
     }
     
+    public function getUserId() {
+    	if ($this->isuserLoggedIn()) {
+    		return $this->user_id;
+    	} else {
+    		return -1;
+    	}
+    }
+    
     public function getUserName() {
     	if ($this->isuserLoggedIn()) {
     		return $this->user_name;
@@ -104,15 +117,15 @@ class Login {
 
     private function registerNewUser() {
         if (empty($_POST['username'])) {
-            $this->errors[] = "Empty Username";
+            $this->errors[] = "Username field was empty.";
         } elseif (empty($_POST['password']) || empty($_POST['repeat-password'])) {
-            $this->errors[] = "Empty Password";
+            $this->errors[] = "Password field was empty.";
         } elseif (strlen($_POST['username']) < 4) {
             $this->errors[] = "Username too short. (min. 4 characters)";
         } elseif (strlen($_POST['password']) < 4) {
             $this->errors[] = "Password too short. (min. 4 characters)";
         } elseif ($_POST['password'] != $_POST['repeat-password']) {
-            $this->errors[] = "Password and password repeat are not the same";
+            $this->errors[] = "Password and password repeat are not the same.";
         } else { 
                 // escapin' this 
                 $this->user_name            = $this->connection->real_escape_string($_POST['username']);

@@ -1,4 +1,4 @@
-function PassedOutMarker(map, position, title, description) {
+function PassedOutMarker(map, guid, position, title, description) {
     // statics
     PassedOutMarker.markerGUIDs = [];
     PassedOutMarker.markerSprite = "./img/marker_sprite.png";
@@ -6,9 +6,9 @@ function PassedOutMarker(map, position, title, description) {
 
     // public properties
     this.events = [];
-    this.guid;
+    this.guid = guid;
     this.marker;
-    this.title = title || "";
+    this.titel = title || ""; // complications with variable name title , use titel instead
     this.description = description || "";
     this.isActive = false;
 
@@ -19,19 +19,27 @@ function PassedOutMarker(map, position, title, description) {
 
     init();
 
-    function init() {
+    function init() {        
         var newGuid;
-        do {
-            newGuid = guid();
-        } while ($.inArray(newGuid, PassedOutMarker.markerGUIDs) !== -1);
-
+        var save ;
+        
+        if (guid) {
+            newGuid = guid;
+            save = false;
+        } else {
+            do {
+                newGuid = createGuid();
+            } while ($.inArray(newGuid, PassedOutMarker.markerGUIDs) !== -1);
+            save = true;
+        }
+        
         PassedOutMarker.markerGUIDs.push(newGuid);
         self.guid = newGuid;
 
-        createMarker();
+        createMarker(save);
     }
 
-    function createMarker() {
+    function createMarker(save) {
         var icon = new google.maps.MarkerImage(PassedOutMarker.markerSprite, new google.maps.Size(20, 34), new google.maps.Point(0, 0));
 
         self.marker = new google.maps.Marker({
@@ -47,7 +55,9 @@ function PassedOutMarker(map, position, title, description) {
         google.maps.event.addListener(self.marker, "mouseover", markerMouseOver);
         google.maps.event.addListener(self.marker, "mouseout", markerMouseOut);
 
-        // TODO create via webserivce
+        if (save) {
+            createAsync();
+        }
     }
 
     function markerClicked(e) {
@@ -60,19 +70,11 @@ function PassedOutMarker(map, position, title, description) {
     }
 
     function markerDragged(e) {
-        self.position = self.marker.getPosition();
-        // TODO update position via webservice
+        position = self.marker.getPosition();
+        self.saveAsync();
     }
 
     function markerMouseOver(e) {
-        //var $contextMenu = $('<div tabindex="-1" class="popover fade in"></div>');      
-
-        //var $arrow = $('<div class="arrow"></div>' +
-        //'<h3 class="popover-title">A Title</h3>'+
-        //'<div class="popover-content">And heres some amazing content. Its very engaging. right?</div>');
-        //$contextMenu.append($arrow);
-
-        //$(map.getDiv()).append($contextMenu);
         self.dispatchEvent("markerMouseOver");
     }
 
@@ -84,9 +86,77 @@ function PassedOutMarker(map, position, title, description) {
         return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
     }
 
-    function guid() {
+    function createGuid() {
         return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
     }
+    
+    function createAsync() {
+        var oData = {
+            guid: self.guid,
+            lat: position.lat(),
+            lng: position.lng(),
+            title: self.titel,
+            description: self.description
+        };
+        
+        // TODO save status as in-creation
+
+        $.ajax({
+            type: "POST",
+            data: oData,
+        }).done(function (data) {
+            // TODO check status / error handling
+            console.log("create done:", data);
+        }).fail(function (data) {
+            // TODO error handling
+            console.log("create fail:", data);
+        });
+    }
+
+    this.saveAsync = function() {
+        var oData = {
+            guid: self.guid,
+            lat: position.lat(),
+            lng: position.lng(),
+            title: self.titel,
+            description: self.description
+        };
+        
+        // TODO save and abort pending requests
+        // TODO check if still in creating process
+        // TODO check if currently deleting
+
+        $.ajax({
+            type: "PUT",
+            data: oData,
+        }).done(function (data) {
+            // TODO check status / error handling
+            console.log("save done:", data);
+        }).fail(function (data) {
+            // TODO error handling
+            console.log("save fail:", data);
+        });
+    };
+
+    this.deleteAsync = function() {
+        var oData = {
+            guid: self.guid,
+        };
+        
+        // TODO cancel pending requests (update, create)
+        // TODO save status as in-deletion
+
+        $.ajax({
+            type: "DELETE",
+            data: oData,
+        }).done(function (data) {
+            // TODO check status / error handling
+            console.log("delete done:", data);
+        }).fail(function (data) {
+            // TODO error handling
+            console.log("delete fail:", data);
+        });
+    };
 }
 
 PassedOutMarker.prototype.setActive = function(active) {
@@ -100,15 +170,15 @@ PassedOutMarker.prototype.setActive = function(active) {
     this.isActive = active;
 };
 PassedOutMarker.prototype.update = function(title, description) {
-    this.title = title || "";
+    this.titel = title || "";
     this.description = description || "";
-    // TODO update via webservice
+    this.saveAsync();
 };
 PassedOutMarker.prototype.delete = function() {
     var index = PassedOutMarker.markerGUIDs.indexOf(this.guid);
     PassedOutMarker.markerGUIDs.splice(index, 1);
     this.marker.setMap(null);
-    // TODO delete via webservice
+    this.deleteAsync();
 };
 PassedOutMarker.prototype.addEventListener = function(event, callback) {
     this.events[event] = this.events[event] || [];

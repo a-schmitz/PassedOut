@@ -37,6 +37,13 @@ body {
     display: none;
 }
 
+.message-overlay {
+    width: 250px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -125px;
+}
 
 /* navbar search icon*/
 .navbar-search .search-query {

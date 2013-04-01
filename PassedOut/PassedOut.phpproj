@@ -30,6 +30,9 @@
     <Compile Include="classes\Login.class.php">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="services\marker.service.php">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="css\bootstrap-responsive.min.css">
@@ -51,6 +54,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="img\marker_sprite_active.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="install\db.sql">
       <SubType>Content</SubType>
     </Content>
     <Content Include="js\bootstrap.min.js">
@@ -75,5 +81,7 @@
     <Folder Include="img" />
     <Folder Include="js" />
     <Folder Include="css" />
+    <Folder Include="install" />
+    <Folder Include="services" />
   </ItemGroup>
 </Project>

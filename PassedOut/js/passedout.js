@@ -14,6 +14,8 @@ $(document).ready(function() {
     $("#search-input").focusin(removeSearchResult);
     $("#search-input").click(removeSearchResult);
     
+    // TODO autosearch after x ms or search button?
+
     function initialize() {
         var mapOptions = {
             center: new google.maps.LatLng(0, 0), 
@@ -26,6 +28,26 @@ $(document).ready(function() {
 
         $detailsMenu = $("#marker-details");
         $(map.getDiv()).append($detailsMenu);
+
+        loadMarker();
+    }
+
+    function loadMarker() {
+        $.ajax({
+            type: "GET",
+        }).done(function (data) {
+            if (data.success) {
+                for (var i = 0; i < data.data.marker.length; i++) {
+                    var markerData = data.data.marker[i];
+                    bindMarkerEvents(new PassedOutMarker(map, markerData.guid, new google.maps.LatLng(markerData.lat, markerData.lng), markerData.title, markerData.description));
+                }
+            } else {
+                // TODO error handling
+            }
+        }).fail(function (data) {
+            // TODO error handling
+            console.log("fail:", data);
+        });
     }
 
     function preventDefault(e) {
@@ -91,12 +113,23 @@ $(document).ready(function() {
     }
 
     function addMarker(e) {
-        var marker = new PassedOutMarker(map);
-        marker.addEventListener("markerClicked", markerClicked);
-        marker.addEventListener("markerMouseOver", function() { console.log("mouseOver"); });
-        marker.addEventListener("markerMouseOut", function () { console.log("mouseOut"); });
-
+        bindMarkerEvents(new PassedOutMarker(map));
         return preventDefault(e);
+    }
+    
+    function bindMarkerEvents(marker) {
+        marker.addEventListener("markerClicked", markerClicked);
+        marker.addEventListener("markerMouseOver", function () { /*console.log("mouseOver");*/ });
+        marker.addEventListener("markerMouseOut", function () { /*console.log("mouseOut");*/ });
+        // TODO mouseover popup?
+        //var $contextMenu = $('<div tabindex="-1" class="popover fade in"></div>');      
+
+        //var $arrow = $('<div class="arrow"></div>' +
+        //'<h3 class="popover-title">A Title</h3>'+
+        //'<div class="popover-content">And heres some amazing content. Its very engaging. right?</div>');
+        //$contextMenu.append($arrow);
+
+        //$(map.getDiv()).append($contextMenu);
     }
 
     function saveMarker() {
@@ -121,7 +154,7 @@ $(document).ready(function() {
 
         if (show === true) {
             activeMarker = marker;
-            $inputTitle.val(marker.title);
+            $inputTitle.val(marker.titel);
             $inputDescription.val(marker.description);
             $detailsMenu.show();
         } else {

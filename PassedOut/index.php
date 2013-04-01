@@ -89,30 +89,33 @@ $login = new Login($db);
         </div>
     <?php
 
-    if ($login->errors) {
-        foreach ($login->errors as $error) {
-
-    ?>
-    <div class="login_message error">
-        <?php echo $error; ?>
+    if ($login->errors) { ?>
+    
+    <div class="alert alert-block alert-error fade in message-overlay">
+        <button class="close" data-dismiss="alert" type="button">&times;</button>
+        <h4 class="alert-heading">Oh snap! You got an error!</h4>
+        
+        <?php foreach ($login->errors as $error) { ?>
+        <p><?php echo $error; ?></p>
+        <?php } ?>
     </div>
-    <?php
+    <?php }
 
-        }
-    }
-
-    if ($login->messages) {
-        foreach ($login->messages as $message) {
-    ?>
-    <div class="login_message success">
-        <?php echo $message; ?>
+    if ($login->messages) { ?>
+    
+    <div class="alert alert-block alert-info fade in message-overlay">
+        <button class="close" data-dismiss="alert" type="button">&times;</button>
+        <h4 class="alert-heading">Heads up!</h4>
+        
+        <?php foreach ($login->messages as $message) { ?>
+        <p><?php echo $message; ?></p>
+        <?php } ?>
     </div>
-    <?php
-
-        }
-    } ?>
+    <?php } ?>
+    
     <script src="./js/jquery-1.9.1.min.js"></script>
     <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/globals.js"></script>
     <script src="./js/passedout-marker.js"></script>
     <script src="./js/passedout.js"></script>
   </body>
